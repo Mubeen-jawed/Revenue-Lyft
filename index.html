@@ -23,7 +23,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;0,9..40,600;1,9..40,300&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  
   <!-- Schema Markup -->
+  <link rel="icon" type="image/png" href="favicon.png" />
+  <link rel="apple-touch-icon" sizes="180x180" href="favicon.png" />
+
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/7.0.1/css/all.min.css" integrity="sha512-2SwdPD6INVrV/lHTZbO2nodKhrnDdJK9/kg2XD1r9uGqPo1cUbujc+IYdlYdEErWNu69gVcYgdxlmVmzTWnetw==" crossorigin="anonymous" referrerpolicy="no-referrer" />  
+  
   <script type="application/ld+json">
   {
     "@context": "https://schema.org",
@@ -46,7 +52,7 @@
   </script>
   <style>
     /* ============================================================
-       DESIGN SYSTEM — Revenue Lyft
+       DESIGN SYSTEM, Revenue Lyft
        Black + Yellow / Industrial Precision Aesthetic
        Font: Bebas Neue (display) + DM Sans (body) + DM Mono (accent)
     ============================================================ */
@@ -185,7 +191,7 @@
       transform: translateY(-2px);
     }
     .btn--lg { padding: 18px 36px; font-size: 1.05rem; }
-    .btn--sm { padding: 10px 20px; font-size: 0.88rem; }
+    .btn--sm { padding: 8px 16; font-size: 0.88rem; }
 
     /* Arrow icon in button */
     .btn-arrow {
@@ -225,7 +231,7 @@
       left: 0;
       right: 0;
       z-index: 1000;
-      padding: 16px 0;
+      padding: 10px 0;
       transition: all var(--transition);
     }
     .navbar.scrolled {
@@ -247,7 +253,7 @@
     }
     .navbar__logo img {
       /* height: 36px; */
-      width: 200px;
+      width: 180px;
       /* filter: brightness(0) invert(1); */
       transition: filter var(--transition);
     }
@@ -358,6 +364,7 @@
 
     .hero__headline {
       margin-bottom: 20px;
+      margin-top: 50px;
       color: var(--white);
     }
     .hero__headline em {
@@ -708,7 +715,6 @@
     .niche-card__icon {
       width: 64px;
       height: 64px;
-      background: var(--yellow-glow);
       border: 1px solid var(--border-y);
       border-radius: var(--r-md);
       display: flex;
@@ -899,7 +905,7 @@
     }
 
     /* ====================================================
-       AUDIT TOOL — PROGRESSIVE MULTI-STEP
+       AUDIT TOOL, PROGRESSIVE MULTI-STEP
     ==================================================== */
     #audit-tool {
       padding: 100px 0;
@@ -1017,7 +1023,7 @@
       margin-bottom: 8px;
     }
 
-    /* Entry step — just a big URL bar */
+    /* Entry step, just a big URL bar */
     .audit-entry {
       display: flex;
       gap: 12px;
@@ -1833,9 +1839,8 @@
       align-items: center;
     }
     .footer__logo img {
-      height: 30px;
-      width: auto;
-      filter: brightness(0) invert(1);
+      width: 200px;
+
     }
     .footer__links {
       display: flex;
@@ -1952,7 +1957,9 @@
     @media (max-width: 768px) {
       .navbar__links, .navbar__cta { display: none; }
       .navbar__mobile-toggle { display: flex; }
-      .navbar__logo img { height: 30px; }
+      .navbar__logo img { width: 150px; }
+            .footer__logo img { width: 180px; }
+
       .hero__ctas { flex-direction: column; }
       .hero__ctas .btn { width: 100%; justify-content: center; }
       h1 { font-size: 3rem; }
@@ -1999,8 +2006,8 @@
 
     @media (max-width: 480px) {
       .container { padding: 0 16px; }
-      .navbar__logo img { height: 26px; }
-      .footer__logo img { height: 24px; }
+      .navbar__logo img { width: 120px; }
+      .footer__logo img { width: 150px; }
       h1 { font-size: 2.4rem; }
       h2 { font-size: 1.8rem; }
       h3 { font-size: 1.3rem; }
@@ -2176,15 +2183,15 @@
 
         <!-- LEFT COLUMN -->
         <div class="hero__left fade-up">
-          <div class="hero__badge">
+          <!-- <div class="hero__badge">
             <span class="hero__badge-dot"></span>
             <span>HVAC &amp; Plumbing Website Optimization</span>
-          </div>
+          </div> -->
           <h1 class="hero__headline">
             MORE BOOKED JOBS FROM<br>YOUR <em>EXISTING</em><br>WEBSITE TRAFFIC
           </h1>
           <p class="hero__subheadline">
-            We optimize contractor websites so more of your visitors turn into phone calls, booked appointments, and paying customers — without spending more on ads.
+            We optimize contractor websites so more of your visitors turn into phone calls, booked appointments, and paying customers, without spending more on ads.
           </p>
           <div class="hero__ctas">
             <a href="#audit-tool" class="btn btn--primary btn--lg">
@@ -2199,11 +2206,11 @@
           <div class="hero__trust">
             <div class="hero__trust-line">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-              No ad spend required — we optimize what you already have
+              No ad spend required, we optimize what you already have
             </div>
             <div class="hero__trust-line">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
-              Results-first guarantee — you don't keep paying if we don't deliver
+              Results-first guarantee, you don't keep paying if we don't deliver
             </div>
             <div class="hero__trust-line">
               <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M9 16.17L4.83 12l-1.42 1.41L9 19 21 7l-1.41-1.41L9 16.17z"/></svg>
@@ -2212,7 +2219,7 @@
           </div>
         </div>
 
-        <!-- RIGHT COLUMN — BOOKING WIDGET -->
+        <!-- RIGHT COLUMN, BOOKING WIDGET -->
         <div class="hero__booking fade-up fade-up-d2">
           <div class="audit-panel__top"></div>
           <div class="booking-calendar" data-calendar="hero">
@@ -2272,7 +2279,7 @@
         <div class="section-label">Who We Serve</div>
         <h2>BUILT SPECIFICALLY FOR<br>HOME SERVICE BUSINESSES</h2>
         <p style="max-width:540px; margin: 16px auto 0; font-size:1.05rem;">
-          We don't work with everyone. We go deep on two trades — because generic advice doesn't book more jobs.
+          We don't work with everyone. We go deep on two trades, because generic advice doesn't book more jobs.
         </p>
       </div>
 
@@ -2280,14 +2287,14 @@
 
         <!-- HVAC CARD -->
         <div class="niche-card fade-up fade-up-d1">
-          <div class="niche-card__icon">🌡️</div>
+          <div class="niche-card__icon"><i class="fa-regular fa-snowflake"></i></div>
           <h3>HVAC COMPANIES</h3>
-          <p>Your website should be converting Google visitors into service calls year-round — not just when the heat breaks down. Most HVAC sites lose 60–70% of visitors before they ever make contact.</p>
+          <p>Your website should be converting Google visitors into service calls year-round, not just when the heat breaks down. Most HVAC sites lose 60–70% of visitors before they ever make contact.</p>
           <p class="mono" style="color: var(--white-50); margin-bottom: 16px;">Common problems we fix:</p>
           <ul class="niche-problems">
             <li><span class="problem-x">✕</span>No clear "emergency service" CTA above the fold</li>
             <li><span class="problem-x">✕</span>Service pages that don't rank or convert</li>
-            <li><span class="problem-x">✕</span>No trust signals — reviews or certifications buried</li>
+            <li><span class="problem-x">✕</span>No trust signals, reviews or certifications buried</li>
             <li><span class="problem-x">✕</span>Phone number invisible on mobile</li>
           </ul>
           <p class="mono" style="color: var(--yellow); margin-bottom: 16px;">After our optimization:</p>
@@ -2301,13 +2308,13 @@
 
         <!-- PLUMBING CARD -->
         <div class="niche-card fade-up fade-up-d2">
-          <div class="niche-card__icon">🔧</div>
+          <div class="niche-card__icon"><i class="fa-solid fa-screwdriver"></i></div>
           <h3>PLUMBING COMPANIES</h3>
-          <p>When a pipe bursts at 2am, homeowners pick the first site that makes them feel confident. Your site needs to communicate trust and urgency instantly — or they're calling your competitor.</p>
+          <p>When a pipe bursts at 2am, homeowners pick the first site that makes them feel confident. Your site needs to communicate trust and urgency instantly, or they're calling your competitor.</p>
           <p class="mono" style="color: var(--white-50); margin-bottom: 16px;">Common problems we fix:</p>
           <ul class="niche-problems">
             <li><span class="problem-x">✕</span>Generic homepage that could be any contractor</li>
-            <li><span class="problem-x">✕</span>No local area signaling — visitors unsure you serve them</li>
+            <li><span class="problem-x">✕</span>No local area signaling, visitors unsure you serve them</li>
             <li><span class="problem-x">✕</span>Slow load times costing emergency calls</li>
             <li><span class="problem-x">✕</span>Contact forms nobody fills out</li>
           </ul>
@@ -2316,7 +2323,7 @@
             <li><span class="win-check">✓</span>Localized hero copy mentioning your city and neighborhoods</li>
             <li><span class="win-check">✓</span>24/7 emergency booking flow that actually converts</li>
             <li><span class="win-check">✓</span>Sub-3 second load time on mobile</li>
-            <li><span class="win-check">✓</span>One-step contact — no friction, no confusion</li>
+            <li><span class="win-check">✓</span>One-step contact, no friction, no confusion</li>
           </ul>
         </div>
 
@@ -2488,14 +2495,14 @@
   </section>
 
   <!-- ================================================
-       AUDIT TOOL — PROGRESSIVE FLOW
+       AUDIT TOOL, PROGRESSIVE FLOW
   ================================================ -->
   <section id="audit-tool">
     <div class="container">
       <div class="audit-tool__header fade-up">
         <div class="section-label">Free Tool</div>
         <h2>GET YOUR FREE WEBSITE<br>CONVERSION AUDIT</h2>
-        <p>Enter your URL and get a real conversion score, your top revenue leaks, and exact fixes — in 60 seconds. No signup required to start.</p>
+        <p>Enter your URL and get a real conversion score, your top revenue leaks, and exact fixes, in 60 seconds. No signup required to start.</p>
       </div>
 
       <div class="audit-panel fade-up fade-up-d1">
@@ -2622,7 +2629,7 @@
             <!-- Partial teaser (shown after fetch, before email unlock) -->
             <div id="teaserView" style="display:none; flex-direction:column; gap:20px;">
               <div>
-                <div class="mono" style="color: var(--yellow); margin-bottom: 8px;">STEP 3 OF 4 — YOUR SCORE IS READY</div>
+                <div class="mono" style="color: var(--yellow); margin-bottom: 8px;">STEP 3 OF 4, YOUR SCORE IS READY</div>
                 <div class="step-headline">HERE'S YOUR CONVERSION SCORE</div>
                 <p class="step-sub">We found some conversion issues on your site. Here's the overview.</p>
               </div>
@@ -2652,14 +2659,14 @@
               </div>
 
               <div class="unlock-overlay">
-                <p>Enter your email to unlock the full report — your revenue leaks, quick fixes, and estimated impact.</p>
+                <p>Enter your email to unlock the full report, your revenue leaks, quick fixes, and estimated impact.</p>
                 <div class="email-input-row" style="max-width: 480px; margin: 0 auto 10px;">
                   <input type="email" id="auditEmail" placeholder="your@email.com" />
                   <button class="btn btn--primary" onclick="unlockFullReport()">
                     Unlock Report →
                   </button>
                 </div>
-                <div class="skip-link" onclick="showFullResult()">Skip — show me the results anyway</div>
+                <div class="skip-link" onclick="showFullResult()">Skip, show me the results anyway</div>
               </div>
             </div>
           </div>
@@ -2711,11 +2718,11 @@
       <div class="community__header fade-up">
         <div class="section-label">Community</div>
         <h2>SHARING REAL INSIGHTS WITH<br>THE CONTRACTOR COMMUNITY</h2>
-        <p style="max-width:520px; margin-top: 14px;">We share what we learn every week on LinkedIn and Reddit — actionable conversion strategies for home service businesses, no fluff.</p>
+        <p style="max-width:520px; margin-top: 14px;">We share what we learn every week on LinkedIn and Reddit, actionable conversion strategies for home service businesses, no fluff.</p>
       </div>
 
       <!--
-        DEVELOPER NOTE — LinkedIn/Reddit Post Carousel:
+        DEVELOPER NOTE, LinkedIn/Reddit Post Carousel:
         Option A (Recommended): Use LinkedIn oEmbed API or RSS feeds to pull posts dynamically.
         Option B: Use a static JSON array of posts and render them via React useState.
         
@@ -2741,7 +2748,7 @@
             </div>
           </div>
           <p class="post-card__excerpt">
-            Most HVAC websites lose 70% of visitors in the first 10 seconds. Here's the #1 reason why — and it's not your design. It's your headline. Your headline needs to answer 3 questions instantly: What do you do? Where do you do it? Why should I call YOU?
+            Most HVAC websites lose 70% of visitors in the first 10 seconds. Here's the #1 reason why, and it's not your design. It's your headline. Your headline needs to answer 3 questions instantly: What do you do? Where do you do it? Why should I call YOU?
           </p>
           <div class="post-card__footer">
             <span>2 days ago · 847 impressions</span>
@@ -2787,7 +2794,7 @@
             </div>
           </div>
           <p class="post-card__excerpt">
-            "My Google rankings are decent but nobody's calling" — I see this problem 3x a week. Rankings get you traffic. Your website converts that traffic (or doesn't). These are two completely different problems. Here's a quick 5-point checklist to diagnose which one is hurting you...
+            "My Google rankings are decent but nobody's calling", I see this problem 3x a week. Rankings get you traffic. Your website converts that traffic (or doesn't). These are two completely different problems. Here's a quick 5-point checklist to diagnose which one is hurting you...
           </p>
           <div class="post-card__footer">
             <span>1 week ago · 312 upvotes</span>
@@ -2877,7 +2884,7 @@
         <div class="section-label">How It Works</div>
         <h2>WHAT HAPPENS AFTER<br>YOU START WORKING WITH US</h2>
         <p style="max-width: 500px; margin: 14px auto 0; font-size: 1.05rem;">
-          A clear, simple process designed to get you results — not just deliverables.
+          A clear, simple process designed to get you results, not just deliverables.
         </p>
       </div>
 
@@ -2913,7 +2920,7 @@
         <div class="process-step">
           <div class="step-number">06</div>
           <h4>ONGOING CRO</h4>
-          <p>Monthly reviews and continuous improvements based on real data — not guesswork.</p>
+          <p>Monthly reviews and continuous improvements based on real data, not guesswork.</p>
         </div>
       </div>
     </div>
@@ -2929,7 +2936,7 @@
         <div class="section-label" style="justify-content: center;">Our Commitment</div>
         <h2 class="guarantee__headline">MORE CALLS. MORE JOBS.<br><em>OR YOU DON'T KEEP PAYING.</em></h2>
         <p class="guarantee__body">
-          We charge a flat upfront fee to cover our work. After that, it's simple: if we don't produce measurable improvement in your website's conversion performance, you stop paying. No retainer. No ongoing fees. Not a single dollar more — until results show up in your numbers.
+          We charge a flat upfront fee to cover our work. After that, it's simple: if we don't produce measurable improvement in your website's conversion performance, you stop paying. No retainer. No ongoing fees. Not a single dollar more, until results show up in your numbers.
         </p>
         <div class="guarantee__terms">
           <div class="guarantee__term">
@@ -2965,7 +2972,7 @@
         <div class="section-label">Investment</div>
         <h2>SIMPLE, OUTCOME-BASED PRICING</h2>
         <p style="max-width: 520px; margin: 14px auto 0;">
-          Every plan includes our results guarantee. Pay upfront, and if we don't deliver measurable conversion improvement — you stop paying. Simple.
+          Every plan includes our results guarantee. Pay upfront, and if we don't deliver measurable conversion improvement, you stop paying. Simple.
         </p>
       </div>
 
@@ -2994,14 +3001,14 @@
           </ul>
           <div class="pricing-card__bonus">
             <p>Bonus Included:</p>
-            <p>Local SEO quick-wins checklist ($197 value) — free with every plan</p>
+            <p>Local SEO quick-wins checklist ($197 value), free with every plan</p>
           </div>
           <a href="#contact" class="btn btn--outline" style="width:100%; justify-content:center;">
             Get Started →
           </a>
         </div>
 
-        <!-- TIER 2 — FEATURED -->
+        <!-- TIER 2, FEATURED -->
         <div class="pricing-card featured fade-up fade-up-d2">
           <div class="pricing-card__popular">Most Popular</div>
           <div class="pricing-card__tier">Growth</div>
@@ -3027,7 +3034,7 @@
           </ul>
           <div class="pricing-card__bonus">
             <p>Bonus Included:</p>
-            <p>2 custom service-area landing pages ($794 value) — free with this plan</p>
+            <p>2 custom service-area landing pages ($794 value), free with this plan</p>
           </div>
           <a href="#contact" class="btn btn--primary" style="width:100%; justify-content:center;">
             Start Growing →
@@ -3059,7 +3066,7 @@
           </ul>
           <div class="pricing-card__bonus">
             <p>Bonus Included:</p>
-            <p>Local SEO foundation setup + citation building ($1,200 value) — free</p>
+            <p>Local SEO foundation setup + citation building ($1,200 value), free</p>
           </div>
           <a href="#contact" class="btn btn--outline" style="width:100%; justify-content:center;">
             Get Started →
@@ -3083,7 +3090,7 @@
         <div class="section-label" style="justify-content:center;">Don't Wait</div>
         <h2 class="final-cta__headline">YOUR WEBSITE SHOULD BE<br>BOOKING JOBS WHILE YOU SLEEP</h2>
         <p class="final-cta__sub">
-          Every week your site stays the same is a week your competitors are getting calls you should be getting. Start with a free audit — takes 60 seconds.
+          Every week your site stays the same is a week your competitors are getting calls you should be getting. Start with a free audit, takes 60 seconds.
         </p>
         <div class="final-cta__buttons">
           <a href="#audit-tool" class="btn btn--primary btn--lg">
@@ -3215,7 +3222,7 @@
   <footer>
     <div class="container">
       <div class="footer__inner">
-        <div class="footer__logo"><img src="assets/ES3.png" alt="Epic Scale Digital"></div>
+        <div class="footer__logo"><img src="1.png" alt="Epic Scale Digital"></div>
         <ul class="footer__links">
           <li><a href="#niches">Services</a></li>
           <li><a href="#process">Process</a></li>
@@ -3279,7 +3286,7 @@
     });
 
     // =====================================================
-    //  AUDIT TOOL — PROGRESSIVE FLOW
+    //  AUDIT TOOL, PROGRESSIVE FLOW
     // =====================================================
 
     // State
@@ -3359,7 +3366,7 @@
       try {
         /*
           =====================================================
-          REAL API INTEGRATION — OpenRouter / Trinity Large
+          REAL API INTEGRATION, OpenRouter / Trinity Large
 
           Replace mock below with a call to your Next.js API route:
 
@@ -3396,7 +3403,7 @@
               siteContent = 'Could not fetch site content.';
             }
 
-            // 2. Call OpenRouter — arcee-ai/trinity-large-preview:free
+            // 2. Call OpenRouter, arcee-ai/trinity-large-preview:free
             const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
               method: 'POST',
               headers: {
@@ -3439,12 +3446,12 @@
           ${siteContent}
 
           Score these 6 categories 1-10:
-          1. Conversion Clarity — headline clarity, service explanation
-          2. CTA Strength — visible phone, call buttons, clear next step
-          3. Trust Signals — reviews, certifications, real photos
-          4. Local Relevance — city names, service area mentions
-          5. Mobile Experience — tap-to-call, readable text, layout
-          6. Message Consistency — site matches the traffic source
+          1. Conversion Clarity, headline clarity, service explanation
+          2. CTA Strength, visible phone, call buttons, clear next step
+          3. Trust Signals, reviews, certifications, real photos
+          4. Local Relevance, city names, service area mentions
+          5. Mobile Experience, tap-to-call, readable text, layout
+          6. Message Consistency, site matches the traffic source
 
           Return ONLY valid JSON in this structure:
           {
@@ -3473,7 +3480,7 @@
           =====================================================
         */
 
-        // MOCK — remove when backend is live
+        // MOCK, remove when backend is live
         await new Promise(r => setTimeout(r, 4000));
         auditData = generateMockAudit(url, business, selectedTraffic, city);
 
@@ -3603,13 +3610,13 @@
           { title: 'No visible emergency call-to-action',
             why: 'Home service visitors are often in urgent situations. A generic "Contact Us" buried mid-page costs you your highest-value, highest-urgency calls.' },
           { title: 'Trust signals buried too deep',
-            why: 'Your reviews and credentials exist on the page — but visitors who bounce in 8 seconds never reach them. Social proof must be in the first screen.' },
+            why: 'Your reviews and credentials exist on the page, but visitors who bounce in 8 seconds never reach them. Social proof must be in the first screen.' },
           { title: 'Phone number not tap-optimized on mobile',
             why: '70%+ of your traffic is mobile. If dialing requires copy-pasting rather than a single tap, you\'re handing those calls to competitors.' },
         ],
         fixes: [
           `Rewrite your hero headline to include "${city || 'your city'}" and your specific service (e.g. "Fast ${business === 'hvac' ? 'AC Repair' : 'Plumbing'} in ${city || 'Your City'}")`,
-          'Place a large yellow/orange "Call Now" button in the top-right navbar — visible without scrolling on every device',
+          'Place a large yellow/orange "Call Now" button in the top-right navbar, visible without scrolling on every device',
           'Move 3 Google review snippets (name, rating, quote) directly beneath your headline',
           'Replace any generic form CTA like "Submit" with "Book My Free Estimate" or "Get a Quote in 60 Seconds"',
           `Add a simple "Areas We Serve" section near the top listing your key cities and neighborhoods`,
@@ -3717,7 +3724,7 @@
       e.preventDefault();
       // DEVELOPER NOTE: Send to your API route /api/contact
       const btn = e.target.querySelector('button[type="submit"]');
-      btn.textContent = '✓ Message Sent — We\'ll be in touch within 4 hours';
+      btn.textContent = '✓ Message Sent, We\'ll be in touch within 4 hours';
       btn.style.background = 'rgba(245,200,0,0.15)';
       btn.style.border = '1px solid rgba(245,200,0,0.4)';
       btn.style.color = '#F5C800';
