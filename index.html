@@ -741,10 +741,11 @@
        LOGOS / TRUST BAR
     ==================================================== */
     #trust-bar {
-      padding: 32px 0;
+      padding: 28px 0;
       border-top: 1px solid var(--border);
       border-bottom: 1px solid var(--border);
       background: var(--black-2);
+      overflow: hidden;
     }
 
     .trust-bar__inner {
@@ -766,18 +767,46 @@
 
     .trust-bar__logos {
       display: flex;
-      align-items: center;
-      gap: 40px;
+      overflow: hidden;
       flex: 1;
-      justify-content: space-around;
+      mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+      -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+    }
+
+    .trust-bar__track {
+      display: flex;
+      align-items: center;
+      gap: 48px;
+      animation: marquee 25s linear infinite;
+      white-space: nowrap;
+      will-change: transform;
+    }
+
+    .trust-bar__track:hover {
+      animation-play-state: paused;
+    }
+
+    @keyframes marquee {
+      0% {
+        transform: translateX(0);
+      }
+
+      100% {
+        transform: translateX(-50%);
+      }
     }
 
     .trust-logo {
       font-family: var(--font-display);
-      font-size: 1.1rem;
+      font-size: 1.2rem;
       color: var(--white-20);
       letter-spacing: 0.08em;
       transition: color var(--transition);
+      white-space: nowrap;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      gap: 10px;
     }
 
     .trust-logo:hover {
@@ -808,7 +837,7 @@
       background: var(--black-3);
       border: 1px solid var(--border);
       border-radius: var(--r-xl);
-      padding: 48px 40px;
+      padding: 0;
       position: relative;
       overflow: hidden;
       transition: all var(--transition);
@@ -839,15 +868,7 @@
     }
 
     .niche-card__icon {
-      width: 64px;
-      height: 64px;
-      border: 1px solid var(--border-y);
-      border-radius: var(--r-md);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      margin-bottom: 28px;
-      font-size: 28px;
+      display: none;
     }
 
     .niche-card h3 {
@@ -956,7 +977,7 @@
 
     .case-card__image {
       width: 100%;
-      height: 180px;
+      height: 200px;
       background: var(--black-5);
       position: relative;
       overflow: hidden;
@@ -2166,6 +2187,89 @@
     }
 
     /* ====================================================
+       FAQ
+    ==================================================== */
+    #faq {
+      padding: 100px 0;
+      background: var(--black);
+    }
+
+    .faq__header {
+      margin-bottom: 56px;
+    }
+
+    .faq__grid {
+      max-width: 760px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .faq-item {
+      border: 1px solid var(--border);
+      border-radius: var(--r-md);
+      background: var(--black-2);
+      overflow: hidden;
+      transition: border-color var(--transition);
+    }
+
+    .faq-item.active {
+      border-color: var(--border-y);
+    }
+
+    .faq-item__question {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      padding: 20px 24px;
+      cursor: pointer;
+      width: 100%;
+      background: none;
+      border: none;
+      color: var(--white);
+      font-family: var(--font-body);
+      font-size: 1rem;
+      font-weight: 500;
+      text-align: left;
+      line-height: 1.5;
+      transition: color var(--transition);
+    }
+
+    .faq-item__question:hover {
+      color: var(--yellow);
+    }
+
+    .faq-item__chevron {
+      flex-shrink: 0;
+      width: 20px;
+      height: 20px;
+      transition: transform 0.3s ease;
+    }
+
+    .faq-item.active .faq-item__chevron {
+      transform: rotate(180deg);
+    }
+
+    .faq-item__answer {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height 0.35s ease;
+    }
+
+    .faq-item.active .faq-item__answer {
+      max-height: 300px;
+    }
+
+    .faq-item__answer-inner {
+      padding: 0 24px 20px;
+      font-size: 0.92rem;
+      color: var(--white-50);
+      line-height: 1.7;
+    }
+
+    /* ====================================================
        CONTACT
     ==================================================== */
     #contact {
@@ -2401,8 +2505,6 @@
 
       .hero__booking {
         max-width: 560px;
-        margin-top: 0px;
-
       }
 
       .case-studies__grid {
@@ -3025,6 +3127,22 @@
               Built exclusively for HVAC and Plumbing businesses
             </div>
           </div>
+          <div class="hero__faces">
+            <div class="hero__avatars">
+              <img class="hero__avatar"
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&q=80"
+                alt="Client">
+              <img class="hero__avatar"
+                src="https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=100&q=80"
+                alt="Client">
+              <img class="hero__avatar"
+                src="https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=100&q=80"
+                alt="Client">
+            </div>
+            <div class="hero__faces-text">
+              <strong>127+ contractors</strong> have boosted their bookings with us
+            </div>
+          </div>
         </div>
 
         <!-- RIGHT COLUMN, BOOKING WIDGET -->
@@ -3066,18 +3184,47 @@
     </div>
   </section>
 
-  <!-- TRUST BAR -->
+  <!-- TRUST BAR (Marquee) -->
   <div id="trust-bar">
     <div class="container">
       <div class="trust-bar__inner">
         <span class="trust-bar__label">Trusted by</span>
-        <div class="trust-bar__logos">
-          <!-- DEVELOPER NOTE: Replace with actual client logo <img> tags -->
-          <span class="trust-logo">ARCTIC HVAC</span>
-          <span class="trust-logo">PROFLOW PLUMBING</span>
-          <span class="trust-logo">COMFORT AIR CO</span>
-          <span class="trust-logo">RAPID ROOTER</span>
-          <span class="trust-logo">PEAK TEMP HVAC</span>
+        <div class="trust-bar__marquee">
+          <div class="trust-bar__track">
+            <span class="trust-logo">ARCTIC HVAC</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">PROFLOW PLUMBING</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">COMFORT AIR CO</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">RAPID ROOTER</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">PEAK TEMP HVAC</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">ELITE PLUMBING</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">SUMMIT HEATING</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">CLEARFLOW DRAINS</span>
+            <span class="trust-logo__separator"></span>
+            <!-- Duplicate set for seamless loop -->
+            <span class="trust-logo">ARCTIC HVAC</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">PROFLOW PLUMBING</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">COMFORT AIR CO</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">RAPID ROOTER</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">PEAK TEMP HVAC</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">ELITE PLUMBING</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">SUMMIT HEATING</span>
+            <span class="trust-logo__separator"></span>
+            <span class="trust-logo">CLEARFLOW DRAINS</span>
+            <span class="trust-logo__separator"></span>
+          </div>
         </div>
       </div>
     </div>
@@ -3158,132 +3305,144 @@
           made-up numbers.</p>
       </div>
 
-      <div class="case-studies__grid">
+      <div class="case-studies__grid-wrap">
+        <button class="case-studies__chevron case-studies__chevron--left" id="caseChevronLeft" aria-label="Previous">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M15 18l-6-6 6-6" />
+          </svg>
+        </button>
+        <button class="case-studies__chevron case-studies__chevron--right" id="caseChevronRight" aria-label="Next">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M9 18l6-6-6-6" />
+          </svg>
+        </button>
+        <div class="case-studies__grid">
 
-        <!-- CASE 1 -->
-        <div class="case-card fade-up fade-up-d1">
-          <div class="case-card__image" style="background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);">
-            <div class="case-card__image-placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
-                stroke-width="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="M3 9h18M9 21V9" />
-              </svg>
-              <span>SCREENSHOT PLACEHOLDER</span>
-            </div>
-          </div>
-          <div class="case-card__body">
-            <div class="case-card__niche">HVAC · Dallas, TX</div>
-            <h3>ARCTIC COMFORT HVAC</h3>
-            <p>Homepage was losing 80% of visitors in under 10 seconds. Emergency service calls were non-existent from
-              organic traffic.</p>
-            <div class="case-metrics">
-              <div class="metric-chip">
-                <div class="metric-chip__value">+187%</div>
-                <div class="metric-chip__label">Phone calls / mo</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">3.2x</div>
-                <div class="metric-chip__label">Lead conversion</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">6wks</div>
-                <div class="metric-chip__label">Time to results</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">92%</div>
-                <div class="metric-chip__label">Mobile score</div>
+          <!-- CASE 1 — Lorenz PHAC -->
+          <div class="case-card fade-up fade-up-d1">
+            <div class="case-card__image" style="background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);">
+              <div class="case-card__image-placeholder">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
+                  stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg>
+                <span>SCREENSHOT PLACEHOLDER</span>
               </div>
             </div>
-            <span class="case-card__tag">CRO Audit</span>
-            <span class="case-card__tag">Copy Rewrite</span>
-            <span class="case-card__tag">Mobile Opt.</span>
+            <div class="case-card__body">
+              <div class="case-card__niche">HVAC · Dallas, TX</div>
+              <h3>ARCTIC COMFORT HVAC</h3>
+              <p>Homepage was losing 80% of visitors in under 10 seconds. Emergency service calls were non-existent from
+                organic traffic.</p>
+              <div class="case-metrics">
+                <div class="metric-chip">
+                  <div class="metric-chip__value">+187%</div>
+                  <div class="metric-chip__label">Phone calls / mo</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">3.2x</div>
+                  <div class="metric-chip__label">Lead conversion</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">6wks</div>
+                  <div class="metric-chip__label">Time to results</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">92%</div>
+                  <div class="metric-chip__label">Mobile score</div>
+                </div>
+              </div>
+              <span class="case-card__tag">CRO Audit</span>
+              <span class="case-card__tag">Copy Rewrite</span>
+              <span class="case-card__tag">Mobile Opt.</span>
+            </div>
           </div>
+
+          <!-- CASE 2 — A-1 Total Service Plumbing -->
+          <div class="case-card fade-up fade-up-d2">
+            <div class="case-card__image" style="background: linear-gradient(135deg, #1c1c22 0%, #2a2a35 100%);">
+              <div class="case-card__image-placeholder">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
+                  stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg>
+                <span>SCREENSHOT PLACEHOLDER</span>
+              </div>
+            </div>
+            <div class="case-card__body">
+              <div class="case-card__niche">Plumbing · Chicago, IL</div>
+              <h3>PROFLOW PLUMBING</h3>
+              <p>Decent traffic from Google My Business, but visitors weren't converting. Contact form was buried 4
+                scrolls deep and nobody saw it.</p>
+              <div class="case-metrics">
+                <div class="metric-chip">
+                  <div class="metric-chip__value">+240%</div>
+                  <div class="metric-chip__label">Form submissions</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">4.1x</div>
+                  <div class="metric-chip__label">ROI on optimization</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">−62%</div>
+                  <div class="metric-chip__label">Bounce rate drop</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">8wks</div>
+                  <div class="metric-chip__label">To full results</div>
+                </div>
+              </div>
+              <span class="case-card__tag">UX Redesign</span>
+              <span class="case-card__tag">CTA Optimization</span>
+              <span class="case-card__tag">Trust Build</span>
+            </div>
+          </div>
+
+          <!-- CASE 3 — Benjamin Franklin Plumbing -->
+          <div class="case-card fade-up fade-up-d3">
+            <div class="case-card__image" style="background: linear-gradient(135deg, #1a1c1a 0%, #252c25 100%);">
+              <div class="case-card__image-placeholder">
+                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
+                  stroke-width="1.5">
+                  <rect x="3" y="3" width="18" height="18" rx="2" />
+                  <path d="M3 9h18M9 21V9" />
+                </svg>
+                <span>SCREENSHOT PLACEHOLDER</span>
+              </div>
+            </div>
+            <div class="case-card__body">
+              <div class="case-card__niche">HVAC · Atlanta, GA</div>
+              <h3>PEAK TEMP HVAC</h3>
+              <p>Running Google Ads but landing page wasn't matching ad message. High spend, low return. New landing
+                pages cut cost-per-lead by half.</p>
+              <div class="case-metrics">
+                <div class="metric-chip">
+                  <div class="metric-chip__value">−51%</div>
+                  <div class="metric-chip__label">Cost per lead</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">+310%</div>
+                  <div class="metric-chip__label">Booked installs</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">5wks</div>
+                  <div class="metric-chip__label">Time to results</div>
+                </div>
+                <div class="metric-chip">
+                  <div class="metric-chip__value">9.1</div>
+                  <div class="metric-chip__label">Conv. score / 10</div>
+                </div>
+              </div>
+              <span class="case-card__tag">Landing Pages</span>
+              <span class="case-card__tag">Ad Alignment</span>
+              <span class="case-card__tag">SEO Copy</span>
+            </div>
+          </div>
+
         </div>
-
-        <!-- CASE 2 -->
-        <div class="case-card fade-up fade-up-d2">
-          <div class="case-card__image" style="background: linear-gradient(135deg, #1c1c22 0%, #2a2a35 100%);">
-            <div class="case-card__image-placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
-                stroke-width="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="M3 9h18M9 21V9" />
-              </svg>
-              <span>SCREENSHOT PLACEHOLDER</span>
-            </div>
-          </div>
-          <div class="case-card__body">
-            <div class="case-card__niche">Plumbing · Chicago, IL</div>
-            <h3>PROFLOW PLUMBING</h3>
-            <p>Decent traffic from Google My Business, but visitors weren't converting. Contact form was buried 4
-              scrolls deep and nobody saw it.</p>
-            <div class="case-metrics">
-              <div class="metric-chip">
-                <div class="metric-chip__value">+240%</div>
-                <div class="metric-chip__label">Form submissions</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">4.1x</div>
-                <div class="metric-chip__label">ROI on optimization</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">−62%</div>
-                <div class="metric-chip__label">Bounce rate drop</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">8wks</div>
-                <div class="metric-chip__label">To full results</div>
-              </div>
-            </div>
-            <span class="case-card__tag">UX Redesign</span>
-            <span class="case-card__tag">CTA Optimization</span>
-            <span class="case-card__tag">Trust Build</span>
-          </div>
-        </div>
-
-        <!-- CASE 3 -->
-        <div class="case-card fade-up fade-up-d3">
-          <div class="case-card__image" style="background: linear-gradient(135deg, #1a1c1a 0%, #252c25 100%);">
-            <div class="case-card__image-placeholder">
-              <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
-                stroke-width="1.5">
-                <rect x="3" y="3" width="18" height="18" rx="2" />
-                <path d="M3 9h18M9 21V9" />
-              </svg>
-              <span>SCREENSHOT PLACEHOLDER</span>
-            </div>
-          </div>
-          <div class="case-card__body">
-            <div class="case-card__niche">HVAC · Atlanta, GA</div>
-            <h3>PEAK TEMP HVAC</h3>
-            <p>Running Google Ads but landing page wasn't matching ad message. High spend, low return. New landing pages
-              cut cost-per-lead by half.</p>
-            <div class="case-metrics">
-              <div class="metric-chip">
-                <div class="metric-chip__value">−51%</div>
-                <div class="metric-chip__label">Cost per lead</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">+310%</div>
-                <div class="metric-chip__label">Booked installs</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">5wks</div>
-                <div class="metric-chip__label">Time to results</div>
-              </div>
-              <div class="metric-chip">
-                <div class="metric-chip__value">9.1</div>
-                <div class="metric-chip__label">Conv. score / 10</div>
-              </div>
-            </div>
-            <span class="case-card__tag">Landing Pages</span>
-            <span class="case-card__tag">Ad Alignment</span>
-            <span class="case-card__tag">SEO Copy</span>
-          </div>
-        </div>
-
-      </div>
+      </div><!-- /.case-studies__grid-wrap -->
 
       <!-- TESTIMONIAL STRIP -->
       <div class="testimonial-strip">
@@ -3296,7 +3455,7 @@
             <div class="testimonial-avatar">MJ</div>
             <div class="testimonial-author-info">
               <p>Mike Johnson</p>
-              <p>Owner · Arctic Comfort HVAC, Dallas</p>
+              <p>Owner · Lorenz PHAC, Springfield</p>
             </div>
           </div>
         </div>
@@ -3309,7 +3468,7 @@
             <div class="testimonial-avatar">SD</div>
             <div class="testimonial-author-info">
               <p>Sarah D.</p>
-              <p>Owner · ProFlow Plumbing, Chicago</p>
+              <p>Owner · A-1 Total Service Plumbing</p>
             </div>
           </div>
         </div>
@@ -3322,7 +3481,7 @@
             <div class="testimonial-avatar">RT</div>
             <div class="testimonial-author-info">
               <p>Rob T.</p>
-              <p>Owner · Peak Temp HVAC, Atlanta</p>
+              <p>Manager · Benjamin Franklin Plumbing</p>
             </div>
           </div>
         </div>
@@ -3978,7 +4137,7 @@
         </div>
       </div>
     </div>
-  </section> -->
+  </section>
 
   <!-- ================================================
        CONTACT
@@ -4610,6 +4769,46 @@
       btn.style.color = '#F5C800';
       btn.disabled = true;
     }
+
+    /* ── FAQ Accordion ── */
+    document.querySelectorAll('.faq-item__question').forEach(btn => {
+      btn.addEventListener('click', () => {
+        const item = btn.closest('.faq-item');
+        const isOpen = item.classList.contains('active');
+        // Close all
+        document.querySelectorAll('.faq-item').forEach(i => {
+          i.classList.remove('active');
+          i.querySelector('.faq-item__question').setAttribute('aria-expanded', 'false');
+        });
+        // Toggle clicked
+        if (!isOpen) {
+          item.classList.add('active');
+          btn.setAttribute('aria-expanded', 'true');
+        }
+      });
+    });
+
+    /* ── Case Studies Chevron Scroll ── */
+    (function () {
+      const grid = document.querySelector('.case-studies__grid');
+      const left = document.getElementById('caseChevronLeft');
+      const right = document.getElementById('caseChevronRight');
+      if (!grid || !left || !right) return;
+      const cards = grid.querySelectorAll('.case-card');
+      let current = 0;
+
+      function scrollToCard(idx) {
+        if (idx < 0) idx = cards.length - 1;
+        if (idx >= cards.length) idx = 0;
+        current = idx;
+        cards[current].scrollIntoView({ behavior: 'smooth', block: 'nearest', inline: 'center' });
+        // Add a brief highlight
+        cards.forEach(c => c.style.opacity = '');
+      }
+
+      left.addEventListener('click', () => scrollToCard(current - 1));
+      right.addEventListener('click', () => scrollToCard(current + 1));
+    })();
   </script>
 
 </body>
