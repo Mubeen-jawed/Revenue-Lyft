@@ -4757,14 +4757,406 @@
 
     // Loading messages cycling
     const loadingMessages = [
-      'Checking conversion clarity...',
-      'Analyzing call-to-action strength...',
-      'Evaluating trust signals...',
-      'Checking local relevance...',
-      'Testing mobile experience...',
-      'Reviewing message consistency...',
+      'Fetching your website...',
+      'Scanning page structure & headings...',
+      'Analyzing call-to-action elements...',
+      'Checking for trust signals & reviews...',
+      'Evaluating local relevance...',
+      'Inspecting forms & contact options...',
       'Calculating your conversion score...',
     ];
+
+    // ── OpenRouter API Key ──
+    // Set your key here or via the browser console: OPENROUTER_KEY = 'sk-or-...'
+    let OPENROUTER_KEY = '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';
+
+    // ── Fetch real website content via CORS proxy ──
+    async function fetchSiteContent(url) {
+      const proxies = [
+        u => `https://api.codetabs.com/v1/proxy/?quest=${encodeURIComponent(u)}`,
+        u => `https://api.allorigins.win/raw?url=${encodeURIComponent(u)}`,
+      ];
+
+      for (const makeUrl of proxies) {
+        try {
+          const proxyUrl = makeUrl(url);
+          const r = await fetch(proxyUrl, {
+            signal: AbortSignal.timeout(15000),
+            redirect: 'follow'
+          });
+          if (!r.ok) continue;
+          const html = await r.text();
+          // Validate: skip if we got an error page, challenge page, or too short
+          if (html.length < 200) continue;
+          if (/security.verification|captcha|challenge-platform|cf-browser/i.test(html.slice(0, 1500))) {
+            console.log('CORS proxy returned a challenge page, skipping...');
+            continue;
+          }
+          if (/^\s*\{.*"error"/i.test(html.slice(0, 100))) {
+            console.log('CORS proxy returned an error JSON, skipping...');
+            continue;
+          }
+          return html;
+        } catch (e) {
+          console.log('Proxy failed:', e.message);
+          continue;
+        }
+      }
+      return null;
+    }
+
+    // ── Extract structured data from HTML ──
+    function extractSiteData(html, url) {
+      const parser = new DOMParser();
+      const doc = parser.parseFromString(html, 'text/html');
+
+      // Remove noise
+      doc.querySelectorAll('script, style, noscript, iframe, svg').forEach(el => el.remove());
+
+      // Meta info
+      const title = doc.querySelector('title')?.textContent?.trim() || '';
+      const metaDesc = doc.querySelector('meta[name="description"]')?.getAttribute('content') || '';
+
+      // Headings
+      const headings = [];
+      doc.querySelectorAll('h1, h2, h3').forEach(h => {
+        const t = h.textContent.trim().replace(/\s+/g, ' ');
+        if (t) headings.push(`<${h.tagName}>: ${t}`);
+      });
+
+      // Links / CTAs
+      const ctas = [];
+      doc.querySelectorAll('a, button').forEach(el => {
+        const text = el.textContent.trim().replace(/\s+/g, ' ');
+        const href = el.getAttribute('href') || '';
+        if (text && text.length < 80) {
+          ctas.push(href.startsWith('tel:') ? `PHONE LINK: ${text} → ${href}` : text);
+        }
+      });
+
+      // Phone numbers anywhere in the page
+      const bodyText = doc.body?.textContent || '';
+      const phones = bodyText.match(/(\+?1?\s?[-.(]?\d{3}[-.)]\s?\d{3}[-.]?\d{4})/g) || [];
+
+      // Images with alt text (trust signals, team photos, certifications)
+      const images = [];
+      doc.querySelectorAll('img[alt]').forEach(img => {
+        const alt = img.getAttribute('alt')?.trim();
+        if (alt && alt.length > 2) images.push(alt);
+      });
+
+      // Forms
+      const forms = [];
+      doc.querySelectorAll('form').forEach(f => {
+        const inputs = Array.from(f.querySelectorAll('input, textarea, select'))
+          .map(i => i.getAttribute('placeholder') || i.getAttribute('name') || i.type)
+          .filter(Boolean);
+        const submitBtn = f.querySelector('button[type="submit"], input[type="submit"]');
+        const btnText = submitBtn?.textContent?.trim() || submitBtn?.value || 'no submit button found';
+        forms.push({ fields: inputs.slice(0, 8), submitText: btnText });
+      });
+
+      // Full visible text (trimmed)
+      const fullText = (doc.body?.innerText || bodyText)
+        .replace(/\s+/g, ' ')
+        .trim()
+        .slice(0, 3000);
+
+      return {
+        title,
+        metaDescription: metaDesc,
+        headings: headings.slice(0, 20),
+        ctas: [...new Set(ctas)].slice(0, 25),
+        phoneNumbers: [...new Set(phones)],
+        imageAlts: images.slice(0, 15),
+        forms,
+        fullText,
+      };
+    }
+
+    // ── Build the AI prompt ──
+    function buildAuditPrompt({ url, traffic, business, city, siteData }) {
+      return `You are an expert website conversion auditor specializing in home service contractor websites (HVAC, plumbing, electrical, etc.).
+
+Analyze this REAL website based on the ACTUAL extracted content below. Your analysis must reference SPECIFIC elements found (or missing) on this exact site. Do NOT give generic advice — every finding must be tied to something concrete from the data.
+
+═══ SITE INFO ═══
+URL: ${url}
+Business type: ${business}
+Primary traffic source: ${traffic}
+Service area: ${city || 'not specified'}
+
+═══ EXTRACTED CONTENT ═══
+Page Title: ${siteData.title}
+Meta Description: ${siteData.metaDescription}
+
+Headings Found:
+${siteData.headings.join('\n') || '(none found)'}
+
+Buttons & CTAs Found:
+${siteData.ctas.join(' | ') || '(none found)'}
+
+Phone Numbers Found: ${siteData.phoneNumbers.join(', ') || '(none found on page)'}
+
+Forms Found: ${siteData.forms.length > 0 ? siteData.forms.map((f, i) => `Form ${i + 1}: fields=[${f.fields.join(', ')}], submit="${f.submitText}"`).join('\n') : '(no forms found)'}
+
+Image Alt Texts: ${siteData.imageAlts.join(', ') || '(none)'}
+
+Page Text (excerpt):
+${siteData.fullText}
+
+═══ SCORING INSTRUCTIONS ═══
+Score each category 1–10 based on what you actually see:
+1. Conversion Clarity — Is the headline specific? Can a visitor instantly know what service is offered and where?
+2. CTA Strength — Are there visible call/book buttons? Is the phone number prominent and clickable?
+3. Trust Signals — Reviews, ratings, certifications, real team photos, years in business visible above fold?
+4. Local Relevance — City names, neighborhoods, "service area" mentions, local landmarks?
+5. Mobile Experience — Is the phone tap-to-call? Are CTAs thumb-friendly? Is text readable?
+6. Message Consistency — Does the site content match what someone from "${traffic}" traffic would expect?
+
+═══ RESPONSE FORMAT ═══
+Return ONLY valid JSON:
+{
+  "overall": "6.2",
+  "categories": [
+    { "label": "Conversion Clarity", "score": 5 },
+    { "label": "CTA Strength", "score": 4 },
+    { "label": "Trust Signals", "score": 7 },
+    { "label": "Local Relevance", "score": 6 },
+    { "label": "Mobile Experience", "score": 8 },
+    { "label": "Message Consistency", "score": 6 }
+  ],
+  "leaks": [
+    { "title": "Specific problem found on THIS site", "why": "Explain using actual content from the site. Reference specific headlines, missing elements, or weak CTAs you found." }
+  ],
+  "fixes": [
+    "Specific actionable fix referencing their actual content"
+  ],
+  "impact": "Fixing these issues could increase your leads by X–Y%."
+}
+
+CRITICAL RULES:
+- Provide 3–5 leaks and 4–6 fixes
+- Every leak and fix MUST reference specific content, headings, CTAs, or missing elements from the extracted data
+- Do NOT use generic filler like "improve your headline" — say exactly what's wrong with THEIR headline
+- The overall score must be the weighted average of all category scores
+- Be honest — if the site is good, score it high. If it's bad, score it low.`;
+    }
+
+    // ── Client-side analysis fallback (when no API key) ──
+    function analyzeLocally(url, siteData, business, traffic, city) {
+      const scores = {};
+
+      // Conversion Clarity
+      const h1s = siteData.headings.filter(h => h.startsWith('<H1>'));
+      const hasSpecificH1 = h1s.some(h => {
+        const lower = h.toLowerCase();
+        return lower.includes('plumb') || lower.includes('hvac') || lower.includes('heat') ||
+               lower.includes('cool') || lower.includes('air condition') || lower.includes('repair') ||
+               lower.includes('install');
+      });
+      const hasCityInH1 = city ? h1s.some(h => h.toLowerCase().includes(city.toLowerCase())) : false;
+      scores.clarity = Math.min(10, 3 + (h1s.length > 0 ? 2 : 0) + (hasSpecificH1 ? 2 : 0) + (hasCityInH1 ? 2 : 0) + (siteData.metaDescription ? 1 : 0));
+
+      // CTA Strength
+      const ctaLower = siteData.ctas.map(c => c.toLowerCase());
+      const hasPhoneLink = ctaLower.some(c => c.includes('phone link'));
+      const hasCallNow = ctaLower.some(c => c.includes('call') || c.includes('phone') || c.includes('dial'));
+      const hasBooking = ctaLower.some(c => c.includes('book') || c.includes('schedule') || c.includes('appointment') || c.includes('estimate') || c.includes('quote'));
+      const phoneOnPage = siteData.phoneNumbers.length > 0;
+      scores.cta = Math.min(10, 2 + (hasPhoneLink ? 2 : 0) + (hasCallNow ? 1 : 0) + (hasBooking ? 2 : 0) + (phoneOnPage ? 2 : 0) + (siteData.forms.length > 0 ? 1 : 0));
+
+      // Trust Signals
+      const textLower = siteData.fullText.toLowerCase();
+      const hasReviews = textLower.includes('review') || textLower.includes('testimonial') || textLower.includes('rating') || textLower.includes('stars');
+      const hasCerts = textLower.includes('licensed') || textLower.includes('certified') || textLower.includes('insured') || textLower.includes('bonded');
+      const hasYears = /\d+\s*(\+\s*)?(years|yrs)/i.test(siteData.fullText);
+      const hasGuarantee = textLower.includes('guarantee') || textLower.includes('warranty') || textLower.includes('satisfaction');
+      scores.trust = Math.min(10, 2 + (hasReviews ? 2 : 0) + (hasCerts ? 2 : 0) + (hasYears ? 1 : 0) + (hasGuarantee ? 1 : 0) + (siteData.imageAlts.length > 3 ? 2 : 0));
+
+      // Local Relevance
+      const cityMentioned = city ? (textLower.includes(city.toLowerCase()) ? 2 : 0) : 1;
+      const hasServiceArea = textLower.includes('service area') || textLower.includes('areas we serve') || textLower.includes('serving');
+      const localTerms = textLower.includes('local') || textLower.includes('near me') || textLower.includes('nearby');
+      scores.local = Math.min(10, 3 + cityMentioned + (hasServiceArea ? 2 : 0) + (localTerms ? 1 : 0) + (siteData.metaDescription.toLowerCase().includes(city?.toLowerCase() || '###') ? 2 : 0));
+
+      // Mobile Experience
+      const tapToCall = hasPhoneLink;
+      const formHasPlaceholders = siteData.forms.some(f => f.fields.some(fi => typeof fi === 'string' && fi.length > 2));
+      scores.mobile = Math.min(10, 4 + (tapToCall ? 2 : 0) + (phoneOnPage ? 1 : 0) + (siteData.forms.length > 0 ? 1 : 0) + (formHasPlaceholders ? 1 : 0) + (siteData.ctas.length > 2 ? 1 : 0));
+
+      // Message Consistency
+      const trafficMap = {
+        google_seo: ['service', 'repair', 'install', city?.toLowerCase()].filter(Boolean),
+        google_ads: ['call now', 'free', 'special', 'discount', 'offer', 'today'],
+        google_business: ['review', 'map', 'directions', 'hours', 'local'],
+        meta_ads: ['offer', 'deal', 'special', 'free', 'limited'],
+        referrals: ['about', 'team', 'family', 'trust', 'experience'],
+        not_sure: [],
+      };
+      const keywords = trafficMap[traffic] || [];
+      const matchCount = keywords.filter(k => textLower.includes(k)).length;
+      scores.consistency = Math.min(10, traffic === 'not_sure' ? 6 : Math.min(10, 3 + Math.round((matchCount / Math.max(keywords.length, 1)) * 7)));
+
+      const overall = ((scores.clarity + scores.cta + scores.trust + scores.local + scores.mobile + scores.consistency) / 6).toFixed(1);
+
+      // Generate specific leaks
+      const leaks = [];
+      if (!hasSpecificH1 && h1s.length > 0) {
+        leaks.push({ title: `Headline "${h1s[0]?.replace(/^<H1>:\s*/, '')}" is too vague`, why: `Your main headline doesn't mention a specific service like HVAC repair or plumbing. Visitors can't instantly tell what you do, which increases bounce rate.` });
+      } else if (h1s.length === 0) {
+        leaks.push({ title: 'No H1 headline found on the page', why: 'Your site is missing a primary headline. Visitors need to immediately see what service you offer and where. Without it, many leave within seconds.' });
+      }
+      if (!hasCityInH1 && city) {
+        leaks.push({ title: `Service city "${city}" missing from your headline`, why: `Local searchers need to confirm you serve their area within seconds. Adding "${city}" to your H1 can significantly reduce bounce rate.` });
+      }
+      if (!hasPhoneLink) {
+        leaks.push({ title: 'Phone number is not a clickable tap-to-call link', why: `${siteData.phoneNumbers.length > 0 ? 'Your phone number (' + siteData.phoneNumbers[0] + ') appears on the page but isn\'t a clickable tel: link.' : 'No phone number was found on the page.'} Over 70% of home service traffic is mobile — every tap saved means more calls.` });
+      }
+      if (!hasReviews) {
+        leaks.push({ title: 'No visible reviews or testimonials', why: 'Social proof is the #1 trust factor for home service buyers. Without reviews on the page, visitors have no reason to choose you over a competitor.' });
+      } else if (scores.trust < 6) {
+        leaks.push({ title: 'Trust signals are present but not prominent enough', why: 'Reviews or credentials exist on your site but may be buried below the fold. Visitors who bounce in 8 seconds never see them.' });
+      }
+      if (!hasBooking) {
+        leaks.push({ title: 'No booking or scheduling CTA found', why: 'Your site lacks a clear "Book Now" or "Schedule Service" button. Visitors who are ready to book have no obvious next step, losing you high-intent leads.' });
+      }
+      if (siteData.forms.length > 0 && siteData.forms.some(f => f.submitText.toLowerCase().includes('submit'))) {
+        leaks.push({ title: `Generic "Submit" button on your contact form`, why: `A "Submit" button converts far less than a specific CTA like "Get My Free Estimate" or "Book My Appointment". This simple change alone can lift form conversions 20–30%.` });
+      }
+      if (!hasCerts) {
+        leaks.push({ title: 'No licensing or certification info visible', why: 'Home service customers want to see you\'re licensed and insured before calling. This missing trust signal costs you cautious buyers.' });
+      }
+
+      // Generate specific fixes
+      const fixes = [];
+      if (h1s.length > 0) {
+        fixes.push(`Rewrite your headline from "${h1s[0]?.replace(/^<H1>:\s*/, '').slice(0, 60)}" to something like "Fast ${business === 'hvac' ? 'AC Repair' : business === 'plumbing' ? 'Plumbing' : 'Home Service'} in ${city || 'Your City'} — Licensed & Available Today"`);
+      } else {
+        fixes.push(`Add a clear H1 headline like "${city || 'Your City'}'s Trusted ${business === 'hvac' ? 'HVAC' : business === 'plumbing' ? 'Plumbing' : 'Home Service'} Experts — Call for Same-Day Service"`);
+      }
+      if (!hasPhoneLink) {
+        fixes.push(`Make your phone number ${siteData.phoneNumbers[0] ? '(' + siteData.phoneNumbers[0] + ')' : ''} a clickable tel: link in a sticky header bar so mobile visitors can call with one tap`);
+      }
+      if (!hasBooking) {
+        fixes.push(`Add a prominent "Book My Free Estimate" or "Schedule Service Now" button above the fold with a contrasting color`);
+      }
+      if (!hasReviews) {
+        fixes.push('Add 3–5 Google review snippets (customer name, star rating, short quote) directly beneath your headline');
+      }
+      if (!hasServiceArea && city) {
+        fixes.push(`Create an "Areas We Serve" section listing ${city} and surrounding neighborhoods/cities to boost local SEO and visitor confidence`);
+      }
+      if (siteData.forms.length > 0) {
+        const form = siteData.forms[0];
+        if (form.submitText.toLowerCase().includes('submit')) {
+          fixes.push(`Change your form submit button from "${form.submitText}" to "Get My Free Estimate" or "Book My Appointment" for 20–30% more form completions`);
+        }
+      }
+      if (!hasCerts) {
+        fixes.push('Add a "Licensed, Bonded & Insured" badge with your license number in the header or hero section');
+      }
+      fixes.push(`Ensure your homepage meta description ("${siteData.metaDescription.slice(0, 60)}${siteData.metaDescription.length > 60 ? '...' : ''}" ) includes "${city || 'your city'}" + your main service for better search click-through rates`);
+
+      const leadLift = scores.cta < 5 ? '40–60' : scores.cta < 7 ? '25–40' : '15–25';
+
+      return {
+        overall,
+        categories: [
+          { label: 'Conversion Clarity', score: scores.clarity },
+          { label: 'CTA Strength', score: scores.cta },
+          { label: 'Trust Signals', score: scores.trust },
+          { label: 'Local Relevance', score: scores.local },
+          { label: 'Mobile Experience', score: scores.mobile },
+          { label: 'Message Consistency', score: scores.consistency },
+        ],
+        leaks: leaks.slice(0, 5),
+        fixes: fixes.slice(0, 6),
+        impact: `Based on your current score of ${overall}/10, fixing these specific issues could increase your website-generated leads by ${leadLift}% without any additional ad spend.`,
+      };
+    }
+
+    // ── AI-powered analysis via OpenRouter ──
+    async function runAIAnalysis(url, traffic, business, city, siteData) {
+      const prompt = siteData
+        ? buildAuditPrompt({ url, traffic, business, city, siteData })
+        : buildUrlOnlyPrompt({ url, traffic, business, city });
+
+      const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
+        method: 'POST',
+        headers: {
+          'Authorization': `Bearer ${OPENROUTER_KEY}`,
+          'Content-Type': 'application/json',
+          'HTTP-Referer': 'https://revenuelyft.com',
+          'X-Title': 'Revenue Lyft Audit Tool'
+        },
+        body: JSON.stringify({
+          model: 'arcee-ai/trinity-large-preview:free',
+          response_format: { type: 'json_object' },
+          messages: [
+            { role: 'system', content: 'You are an expert website conversion auditor for home service businesses. Always respond with valid JSON only. No markdown, no code fences, no extra text.' },
+            { role: 'user', content: prompt }
+          ]
+        })
+      });
+
+      if (!response.ok) throw new Error('AI API returned ' + response.status);
+
+      const result = await response.json();
+      const text = result.choices?.[0]?.message?.content ?? '{}';
+      const cleaned = text.replace(/```json\s*/g, '').replace(/```\s*/g, '').trim();
+      return JSON.parse(cleaned);
+    }
+
+    // ── Prompt when we only have the URL (site couldn't be fetched) ──
+    function buildUrlOnlyPrompt({ url, traffic, business, city }) {
+      return `You are an expert website conversion auditor for home service contractor websites.
+
+I need you to analyze this website URL. We could not scrape the page content directly (it may be behind Cloudflare protection), so analyze based on:
+- The URL structure and domain name
+- Your knowledge of common patterns for ${business} websites
+- What a ${traffic} visitor would expect to see
+- Common conversion mistakes in the home service industry
+
+URL: ${url}
+Business type: ${business}
+Primary traffic source: ${traffic}
+Service area: ${city || 'not specified'}
+
+Score these 6 categories 1–10 (be conservative since you can't verify the actual content):
+1. Conversion Clarity — headline clarity, service explanation
+2. CTA Strength — visible phone, call buttons, clear next step
+3. Trust Signals — reviews, certifications, real photos
+4. Local Relevance — city names, service area mentions
+5. Mobile Experience — tap-to-call, readable text, layout
+6. Message Consistency — site matches the traffic source expectations
+
+Return ONLY valid JSON:
+{
+  "overall": "5.5",
+  "categories": [
+    { "label": "Conversion Clarity", "score": 5 },
+    { "label": "CTA Strength", "score": 4 },
+    { "label": "Trust Signals", "score": 7 },
+    { "label": "Local Relevance", "score": 6 },
+    { "label": "Mobile Experience", "score": 5 },
+    { "label": "Message Consistency", "score": 6 }
+  ],
+  "leaks": [
+    { "title": "Problem title", "why": "Explanation specific to this type of business and traffic source." }
+  ],
+  "fixes": [
+    "Specific actionable fix"
+  ],
+  "impact": "Fixing these issues could increase your leads by X–Y%."
+}
+
+IMPORTANT RULES:
+- Provide 3–5 leaks and 4–6 fixes specific to a ${business} website targeting ${traffic} traffic${city ? ' in ' + city : ''}
+- Note in the impact statement that a deeper analysis is available if the site allows content scanning
+- Be specific to the business type and traffic source, not generic
+- Overall score should be the average of category scores`;
+    }
 
     async function runAudit() {
       const url = document.getElementById('auditUrl').value.trim();
@@ -4780,134 +5172,49 @@
       }, 900);
 
       try {
-        /*
-          =====================================================
-          REAL API INTEGRATION, OpenRouter / Trinity Large
+        // 1. Try to fetch actual website content
+        if (msgEl) msgEl.textContent = 'Fetching your website...';
+        const html = await fetchSiteContent(url);
+        let siteData = null;
 
-          Replace mock below with a call to your Next.js API route:
+        if (html && html.length > 100) {
+          // 2. Extract structured data from the HTML
+          if (msgEl) msgEl.textContent = 'Extracting page content...';
+          siteData = extractSiteData(html, url);
+        }
 
-          const res = await fetch('/api/audit', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ url, traffic: selectedTraffic, business, city })
-          });
-          auditData = await res.json();
-
-          ─── Next.js API route: app/api/audit/route.ts ───
-
-          import { NextRequest, NextResponse } from 'next/server';
-
-          export async function POST(req: NextRequest) {
-            const { url, traffic, business, city } = await req.json();
-
-            // 1. Scrape website content (server-side)
-            let siteContent = '';
-            try {
-              const r = await fetch(url, {
-                headers: { 'User-Agent': 'Mozilla/5.0' },
-                signal: AbortSignal.timeout(8000)
-              });
-              const html = await r.text();
-              siteContent = html
-                .replace(/<script[\s\S]*?<\/script>/gi, '')
-                .replace(/<style[\s\S]*?<\/style>/gi, '')
-                .replace(/<[^>]+>/g, ' ')
-                .replace(/\s+/g, ' ')
-                .trim()
-                .slice(0, 4000);
-            } catch(e) {
-              siteContent = 'Could not fetch site content.';
-            }
-
-            // 2. Call OpenRouter, arcee-ai/trinity-large-preview:free
-            const response = await fetch('https://openrouter.ai/api/v1/chat/completions', {
-              method: 'POST',
-              headers: {
-                'Authorization': `Bearer ${process.env.OPENROUTER_API_KEY}`,
-                'Content-Type': 'application/json',
-                'HTTP-Referer': 'https://revenuelyft.com',
-                'X-Title': 'Revenue Lyft Audit Tool'
-              },
-              body: JSON.stringify({
-                model: 'arcee-ai/trinity-large-preview:free',
-                response_format: { type: 'json_object' },
-                messages: [{
-                  role: 'system',
-                  content: 'You are an expert website conversion auditor for home service businesses. Always respond with valid JSON only.'
-                }, {
-                  role: 'user',
-                  content: buildAuditPrompt({ url, traffic, business, city, siteContent })
-                }]
-              })
-            });
-
-            const result = await response.json();
-            const text = result.choices?.[0]?.message?.content ?? '{}';
-            const data = JSON.parse(text);
-            return NextResponse.json(data);
-          }
-
-          ─── Audit Prompt Builder ───
-
-          function buildAuditPrompt({ url, traffic, business, city, siteContent }) {
-            return `
-          Analyze this home service contractor website for conversion issues.
-
-          URL: ${url}
-          Business type: ${business}
-          Primary traffic: ${traffic}
-          Service area: ${city || 'not specified'}
-
-          WEBSITE TEXT:
-          ${siteContent}
-
-          Score these 6 categories 1-10:
-          1. Conversion Clarity, headline clarity, service explanation
-          2. CTA Strength, visible phone, call buttons, clear next step
-          3. Trust Signals, reviews, certifications, real photos
-          4. Local Relevance, city names, service area mentions
-          5. Mobile Experience, tap-to-call, readable text, layout
-          6. Message Consistency, site matches the traffic source
-
-          Return ONLY valid JSON in this structure:
-          {
-            "overall": "6.2",
-            "categories": [
-              { "label": "Conversion Clarity", "score": 5 },
-              { "label": "CTA Strength", "score": 4 },
-              { "label": "Trust Signals", "score": 7 },
-              { "label": "Local Relevance", "score": 6 },
-              { "label": "Mobile Experience", "score": 8 },
-              { "label": "Message Consistency", "score": 6 }
-            ],
-            "leaks": [
-              { "title": "Problem title", "why": "Why it hurts conversions in 1-2 sentences." }
-            ],
-            "fixes": [
-              "Specific actionable fix 1",
-              "Specific actionable fix 2"
-            ],
-            "impact": "Fixing these issues could increase your leads by X-Y%."
-          }
-
-          Rules: Be specific based on the actual content. Provide 3-5 leaks and 4-5 fixes.
-          `.trim();
-          }
-          =====================================================
-        */
-
-        // MOCK, remove when backend is live
-        await new Promise(r => setTimeout(r, 4000));
-        auditData = generateMockAudit(url, business, selectedTraffic, city);
+        // 3. Route to the best available analysis method
+        if (OPENROUTER_KEY) {
+          // AI-powered analysis (works with or without fetched content)
+          if (msgEl) msgEl.textContent = siteData ? 'Running AI conversion analysis...' : 'Analyzing via AI (site protected, using URL context)...';
+          auditData = await runAIAnalysis(url, selectedTraffic, business, city, siteData);
+        } else if (siteData) {
+          // Local heuristic analysis (needs fetched content)
+          if (msgEl) msgEl.textContent = 'Analyzing conversion elements...';
+          await new Promise(r => setTimeout(r, 800));
+          auditData = analyzeLocally(url, siteData, business, selectedTraffic, city);
+        } else {
+          // No API key and can't fetch — offline fallback
+          auditData = generateOfflineAudit(url, business, selectedTraffic, city);
+        }
 
         clearInterval(msgInterval);
         showTeaser();
 
       } catch (err) {
         clearInterval(msgInterval);
-        console.error(err);
-        // Fallback: still show mock data so UX never breaks
-        auditData = generateMockAudit(url, business, selectedTraffic, city);
+        console.error('Audit error:', err);
+
+        // Last resort fallback
+        try {
+          if (OPENROUTER_KEY) {
+            auditData = await runAIAnalysis(url, selectedTraffic, business, city, null);
+          } else {
+            auditData = generateOfflineAudit(url, business, selectedTraffic, city);
+          }
+        } catch (e2) {
+          auditData = generateOfflineAudit(url, business, selectedTraffic, city);
+        }
         showTeaser();
       }
     }
@@ -4925,8 +5232,9 @@
       // Populate teaser bars
       const bars = document.getElementById('teaserBars');
       bars.innerHTML = auditData.categories.map(c => {
-        const pct = (c.score / 10) * 100;
-        const cls = c.score <= 4 ? 'low' : c.score <= 6 ? 'mid' : '';
+        const numScore = parseInt(c.score);
+        const pct = isNaN(numScore) ? 0 : (numScore / 10) * 100;
+        const cls = isNaN(numScore) ? 'low' : numScore <= 4 ? 'low' : numScore <= 6 ? 'mid' : '';
         return `
           <div class="teaser-bar-row">
             <div class="teaser-bar-label">${c.label}</div>
@@ -4968,7 +5276,8 @@
 
       // Score grid
       document.getElementById('scoreGrid').innerHTML = data.categories.map(c => {
-        const cls = c.score <= 4 ? 'low' : c.score <= 6 ? 'mid' : '';
+        const numScore = parseInt(c.score);
+        const cls = isNaN(numScore) ? 'low' : numScore <= 4 ? 'low' : numScore <= 6 ? 'mid' : '';
         return `
           <div class="score-item">
             <div class="score-item__value ${cls}">${c.score}</div>
@@ -5007,45 +5316,35 @@
       goStep(1);
     }
 
-    // ---- MOCK DATA GENERATOR (remove when backend is live) ----
-    function generateMockAudit(url, business, traffic, city) {
-      const base = Math.floor(Math.random() * 3) + 4;
+    // ── Offline fallback (only when site is completely unreachable) ──
+    function generateOfflineAudit(url, business, traffic, city) {
       return {
-        overall: (base + 1.2).toFixed(1),
+        overall: '—',
         categories: [
-          { label: 'Conversion Clarity', score: base + 1 },
-          { label: 'CTA Strength', score: base },
-          { label: 'Trust Signals', score: base - 1 },
-          { label: 'Local Relevance', score: base + 2 },
-          { label: 'Mobile Experience', score: base },
-          { label: 'Message Consistency', score: base + 1 },
+          { label: 'Conversion Clarity', score: '—' },
+          { label: 'CTA Strength', score: '—' },
+          { label: 'Trust Signals', score: '—' },
+          { label: 'Local Relevance', score: '—' },
+          { label: 'Mobile Experience', score: '—' },
+          { label: 'Message Consistency', score: '—' },
         ],
         leaks: [
           {
-            title: 'Weak above-fold headline',
-            why: 'Visitors cannot immediately confirm you serve their area or handle their specific problem. The first impression decides whether they stay or bounce.'
+            title: 'Website could not be reached',
+            why: `We were unable to fetch content from ${url}. This could mean the site is down, blocking automated requests, or the URL is incorrect. If your site is unreachable to our scanner, it may also be slow or unreliable for real visitors.`
           },
           {
-            title: 'No visible emergency call-to-action',
-            why: 'Home service visitors are often in urgent situations. A generic "Contact Us" buried mid-page costs you your highest-value, highest-urgency calls.'
-          },
-          {
-            title: 'Trust signals buried too deep',
-            why: 'Your reviews and credentials exist on the page, but visitors who bounce in 8 seconds never reach them. Social proof must be in the first screen.'
-          },
-          {
-            title: 'Phone number not tap-optimized on mobile',
-            why: '70%+ of your traffic is mobile. If dialing requires copy-pasting rather than a single tap, you\'re handing those calls to competitors.'
+            title: 'Check your URL and try again',
+            why: 'Make sure the URL is correct and the site is live. If the issue persists, your hosting or DNS configuration may need attention — downtime directly costs you leads.'
           },
         ],
         fixes: [
-          `Rewrite your hero headline to include "${city || 'your city'}" and your specific service (e.g. "Fast ${business === 'hvac' ? 'AC Repair' : 'Plumbing'} in ${city || 'Your City'}")`,
-          'Place a large yellow/orange "Call Now" button in the top-right navbar, visible without scrolling on every device',
-          'Move 3 Google review snippets (name, rating, quote) directly beneath your headline',
-          'Replace any generic form CTA like "Submit" with "Book My Free Estimate" or "Get a Quote in 60 Seconds"',
-          `Add a simple "Areas We Serve" section near the top listing your key cities and neighborhoods`,
+          'Verify the URL is correct and the site loads in a normal browser',
+          'Check your hosting uptime — if the site is down for our scanner, it may be slow or unreliable for real visitors',
+          'Ensure your server isn\'t blocking automated requests (some firewalls block tools like ours)',
+          `Once your site is accessible, re-run this audit for a full conversion analysis`,
         ],
-        impact: `Fixing these issues could increase your website-generated leads by 30–50% without any additional ad spend or traffic.`
+        impact: `We couldn't analyze your site this time. Fix the accessibility issue and re-run the audit for a full report with specific, actionable recommendations.`,
       };
     }
 
