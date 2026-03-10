@@ -289,7 +289,7 @@
       left: 0;
       right: 0;
       z-index: 1000;
-      padding: 10px 0;
+      padding: 2px 0;
       transition: all var(--transition);
     }
 
@@ -297,7 +297,7 @@
       background: rgba(10, 10, 10, 0.95);
       backdrop-filter: blur(20px);
       border-bottom: 1px solid var(--border);
-      padding: 12px 0;
+      padding: 4px 0;
     }
 
     .navbar__inner {
@@ -765,7 +765,7 @@
       flex-shrink: 0;
     }
 
-    .trust-bar__logos {
+    .trust-bar__marquee {
       display: flex;
       overflow: hidden;
       flex: 1;
@@ -813,7 +813,53 @@
       color: var(--white-50);
     }
 
-    /* DEVELOPER NOTE: Replace .trust-logo text with actual client logos as <img> tags */
+    .trust-logo__separator {
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--white-20);
+      flex-shrink: 0;
+    }
+
+    /* HERO AVATARS */
+    .hero__faces {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-top: 32px;
+      padding-top: 28px;
+      border-top: 1px solid var(--border);
+    }
+
+    .hero__avatars {
+      display: flex;
+      align-items: center;
+    }
+
+    .hero__avatar {
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      border: 2px solid var(--black);
+      object-fit: cover;
+      margin-left: -10px;
+      position: relative;
+    }
+
+    .hero__avatar:first-child {
+      margin-left: 0;
+    }
+
+    .hero__faces-text {
+      font-size: 0.85rem;
+      color: var(--white-50);
+      line-height: 1.4;
+    }
+
+    .hero__faces-text strong {
+      color: var(--yellow);
+      font-weight: 600;
+    }
 
     /* ====================================================
        SUB-NICHE SECTION
@@ -841,6 +887,42 @@
       position: relative;
       overflow: hidden;
       transition: all var(--transition);
+    }
+
+    .niche-card__img {
+      position: relative;
+      width: 100%;
+      height: 220px;
+      overflow: hidden;
+    }
+
+    .niche-card__img img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      filter: brightness(0.55) saturate(0.9);
+      transition: all var(--transition);
+    }
+
+    .niche-card:hover .niche-card__img img {
+      filter: brightness(0.65) saturate(1);
+      transform: scale(1.04);
+    }
+
+    .niche-card__img::after {
+      content: '';
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 80px;
+      background: linear-gradient(to bottom, transparent, var(--black-3));
+      pointer-events: none;
+    }
+
+    .niche-card__body {
+      padding: 32px 40px 48px;
     }
 
     .niche-card:hover {
@@ -955,10 +1037,47 @@
       margin-bottom: 60px;
     }
 
+    .case-studies__grid-wrap {
+      position: relative;
+    }
+
     .case-studies__grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
       gap: 24px;
+    }
+
+    .case-studies__chevron {
+      position: absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 48px;
+      height: 48px;
+      border-radius: 50%;
+      border: 1px solid var(--border);
+      background: var(--black-3);
+      color: var(--white-80);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all var(--transition);
+      z-index: 5;
+    }
+
+    .case-studies__chevron:hover {
+      border-color: var(--yellow);
+      color: var(--yellow);
+      background: var(--black-4);
+      box-shadow: 0 0 20px rgba(245, 200, 0, 0.15);
+    }
+
+    .case-studies__chevron--left {
+      left: -24px;
+    }
+
+    .case-studies__chevron--right {
+      right: -24px;
     }
 
     .case-card {
@@ -981,23 +1100,19 @@
       background: var(--black-5);
       position: relative;
       overflow: hidden;
-      display: flex;
-      align-items: center;
-      justify-content: center;
     }
 
-    .case-card__image-placeholder {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
+    .case-card__image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      object-position: top center;
+      display: block;
+      transition: transform 0.4s ease;
     }
 
-    .case-card__image-placeholder span {
-      font-family: var(--font-mono);
-      font-size: 0.65rem;
-      color: var(--white-20);
-      letter-spacing: 0.12em;
+    .case-card:hover .case-card__image img {
+      transform: scale(1.03);
     }
 
     /* Before/After visual bar */
@@ -1930,13 +2045,13 @@
     }
 
     .guarantee__badge {
-      width: 200px;
-      height: 200px;
+      width: 250px;
+      height: 250px;
       border-radius: 50%;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 0 auto 25px;
+      margin: 0 auto 0px;
       font-size: 40px;
     }
 
@@ -2511,6 +2626,19 @@
         grid-template-columns: 1fr 1fr;
       }
 
+      .case-studies__chevron {
+        width: 40px;
+        height: 40px;
+      }
+
+      .case-studies__chevron--left {
+        left: -20px;
+      }
+
+      .case-studies__chevron--right {
+        right: -20px;
+      }
+
       .posts-carousel {
         grid-template-columns: 1fr 1fr;
       }
@@ -2555,23 +2683,6 @@
 
     @media (max-width: 768px) {
 
-      .navbar__links,
-      .navbar__cta {
-        display: none;
-      }
-
-      .navbar__mobile-toggle {
-        display: flex;
-      }
-
-      .navbar__logo img {
-        width: 150px;
-      }
-
-      .footer__logo img {
-        width: 180px;
-      }
-
       .hero__ctas {
         flex-direction: column;
       }
@@ -2593,6 +2704,29 @@
         grid-template-columns: 1fr;
       }
 
+      .case-studies__chevron {
+        width: 36px;
+        height: 36px;
+      }
+
+      .case-studies__chevron--left {
+        left: -8px;
+      }
+
+      .case-studies__chevron--right {
+        right: -8px;
+      }
+
+      .faq-item__question {
+        padding: 16px 18px;
+        font-size: 0.92rem;
+      }
+
+      .faq-item__answer-inner {
+        padding: 0 18px 16px;
+        font-size: 0.88rem;
+      }
+
       .posts-carousel {
         grid-template-columns: 1fr;
       }
@@ -2600,6 +2734,26 @@
       .process__steps,
       .process__steps-row2 {
         grid-template-columns: 1fr;
+        gap: 36px;
+      }
+
+      .process__header {
+        margin-bottom: 40px;
+      }
+
+      .process__steps-row2 {
+        margin-top: 36px;
+      }
+
+      .step-number {
+        width: 56px;
+        height: 56px;
+        font-size: 1.3rem;
+        margin-bottom: 16px;
+      }
+
+      .process-step {
+        padding: 0 10px;
       }
 
       .form-row {
@@ -2661,17 +2815,21 @@
       }
 
       /* Trust bar mobile */
-      .trust-bar__logos {
-        gap: 20px;
+      .trust-bar__track {
+        gap: 32px;
       }
 
       .trust-logo {
-        font-size: 0.85rem;
+        font-size: 1rem;
       }
 
       /* Niche card mobile */
-      .niche-card {
-        padding: 32px 24px;
+      .niche-card__body {
+        padding: 28px 24px 32px;
+      }
+
+      .niche-card__img {
+        height: 180px;
       }
 
       .niche-card h3 {
@@ -2711,6 +2869,44 @@
 
       .step-headline {
         font-size: 1.5rem;
+      }
+
+      /* Navbar mobile */
+      .navbar__links,
+      .navbar__cta {
+        display: none;
+      }
+
+      .navbar__mobile-toggle {
+        display: flex;
+      }
+
+      /* Guarantee badge mobile */
+      .guarantee__badge {
+        width: 150px;
+        height: 150px;
+      }
+
+      /* Contact form panel mobile */
+      .contact__form-panel {
+        padding: 20px;
+      }
+
+      .contact__form-panel .hero__booking {
+        max-width: 100% !important;
+      }
+
+      /* Footer mobile */
+      .footer__inner {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+      }
+
+      .footer__links {
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 16px;
       }
     }
 
@@ -2825,10 +3021,8 @@
       }
 
       /* Trust bar small phone */
-      .trust-bar__logos {
-        gap: 12px;
-        flex-wrap: wrap;
-        justify-content: center;
+      .trust-bar__track {
+        gap: 24px;
       }
 
       .trust-bar__label {
@@ -2836,12 +3030,29 @@
       }
 
       .trust-logo {
-        font-size: 0.75rem;
+        font-size: 0.85rem;
+      }
+
+      .hero__faces {
+        gap: 12px;
+      }
+
+      .hero__avatar {
+        width: 34px;
+        height: 34px;
+      }
+
+      .hero__faces-text {
+        font-size: 0.78rem;
       }
 
       /* Niche card small phone */
-      .niche-card {
+      .niche-card__body {
         padding: 24px 18px;
+      }
+
+      .niche-card__img {
+        height: 160px;
       }
 
       /* Section spacing */
@@ -2965,11 +3176,73 @@
       .impact-box {
         padding: 16px;
       }
+
+      /* Process section small phone */
+      .process__steps,
+      .process__steps-row2 {
+        gap: 28px;
+      }
+
+      .process__header {
+        margin-bottom: 32px;
+      }
+
+      .process__steps-row2 {
+        margin-top: 28px;
+      }
+
+      .step-number {
+        width: 48px;
+        height: 48px;
+        font-size: 1.1rem;
+        margin-bottom: 12px;
+      }
+
+      .process-step h4 {
+        font-size: 1rem;
+      }
+
+      .process-step p {
+        font-size: 0.82rem;
+      }
+
+      /* Guarantee badge small phone */
+      .guarantee__badge {
+        width: 120px;
+        height: 120px;
+      }
+
+      .guarantee__body {
+        font-size: 0.92rem;
+      }
+
+      .guarantee__term {
+        padding: 8px 14px;
+        font-size: 0.78rem;
+      }
+
+      /* Contact form small phone */
+      .contact__form-panel {
+        padding: 16px;
+      }
+
+      /* Footer small phone */
+      .footer__links {
+        gap: 12px;
+      }
+
+      .footer__links a {
+        font-size: 0.82rem;
+      }
     }
 
     /* ====================================================
        MOBILE NAV MENU
     ==================================================== */
+    .navbar.nav-hidden {
+      display: none;
+    }
+
     .mobile-nav {
       display: none;
       position: fixed;
@@ -3046,7 +3319,7 @@
   <!-- MOBILE NAV -->
   <nav class="mobile-nav" id="mobileNav">
     <button class="mobile-nav__close" onclick="toggleMobileNav()">✕</button>
-    <a href="#case-studies" onclick="toggleMobileNav()">Work</a>
+    <a href="#case-studies" onclick="toggleMobileNav()">Recent Work</a>
     <a href="#process" onclick="toggleMobileNav()">Process</a>
     <a href="#pricing" onclick="toggleMobileNav()">Pricing</a>
     <a href="#audit-tool" onclick="toggleMobileNav()">Free Audit</a>
@@ -3060,7 +3333,7 @@
         <div class="navbar__inner">
           <a href="/" class="navbar__logo"><img src="1.png" alt="Epic Scale Digital"></a>
           <ul class="navbar__links">
-            <li><a href="#case-studies">Work</a></li>
+            <li><a href="#case-studies">Recent Work</a></li>
             <li><a href="#process">Process</a></li>
             <li><a href="#pricing">Pricing</a></li>
             <li><a href="#audit-tool">Free Audit</a></li>
@@ -3247,46 +3520,57 @@
 
         <!-- HVAC CARD -->
         <div class="niche-card fade-up fade-up-d1">
-          <div class="niche-card__icon"><i class="fa-regular fa-snowflake"></i></div>
-          <h3>HVAC COMPANIES</h3>
-          <p>Your website should be converting Google visitors into service calls year-round, not just when the heat
-            breaks down. Most HVAC sites lose 60–70% of visitors before they ever make contact.</p>
-          <p class="mono" style="color: var(--white-50); margin-bottom: 16px;">Common problems we fix:</p>
-          <ul class="niche-problems">
-            <li><span class="problem-x">✕</span>No clear "emergency service" CTA above the fold</li>
-            <li><span class="problem-x">✕</span>Service pages that don't rank or convert</li>
-            <li><span class="problem-x">✕</span>No trust signals, reviews or certifications buried</li>
-            <li><span class="problem-x">✕</span>Phone number invisible on mobile</li>
-          </ul>
-          <p class="mono" style="color: var(--yellow); margin-bottom: 16px;">After our optimization:</p>
-          <ul class="niche-wins">
-            <li><span class="win-check">✓</span>Emergency CTAs visible within 2 seconds of landing</li>
-            <li><span class="win-check">✓</span>Seasonal landing pages that convert year-round</li>
-            <li><span class="win-check">✓</span>Trust section showing ratings, certifications, team</li>
-            <li><span class="win-check">✓</span>Tap-to-call on every screen size</li>
-          </ul>
+          <div class="niche-card__img">
+            <img src="https://images.unsplash.com/photo-1585771724684-38269d6639fd?auto=format&fit=crop&w=800&q=80"
+              alt="HVAC technician servicing an air conditioning unit" loading="lazy">
+          </div>
+          <div class="niche-card__body">
+            <h3>HVAC COMPANIES</h3>
+            <p>Your website should be converting Google visitors into service calls year-round, not just when the heat
+              breaks down. Most HVAC sites lose 60–70% of visitors before they ever make contact.</p>
+            <p class="mono" style="color: var(--white-50); margin-bottom: 16px;">Common problems we fix:</p>
+            <ul class="niche-problems">
+              <li><span class="problem-x">✕</span>No clear "emergency service" CTA above the fold</li>
+              <li><span class="problem-x">✕</span>Service pages that don't rank or convert</li>
+              <li><span class="problem-x">✕</span>No trust signals, reviews or certifications buried</li>
+              <li><span class="problem-x">✕</span>Phone number invisible on mobile</li>
+            </ul>
+            <p class="mono" style="color: var(--yellow); margin-bottom: 16px;">After our optimization:</p>
+            <ul class="niche-wins">
+              <li><span class="win-check">✓</span>Emergency CTAs visible within 2 seconds of landing</li>
+              <li><span class="win-check">✓</span>Seasonal landing pages that convert year-round</li>
+              <li><span class="win-check">✓</span>Trust section showing ratings, certifications, team</li>
+              <li><span class="win-check">✓</span>Tap-to-call on every screen size</li>
+            </ul>
+          </div>
         </div>
 
         <!-- PLUMBING CARD -->
         <div class="niche-card fade-up fade-up-d2">
-          <div class="niche-card__icon"><i class="fa-solid fa-screwdriver"></i></div>
-          <h3>PLUMBING COMPANIES</h3>
-          <p>When a pipe bursts at 2am, homeowners pick the first site that makes them feel confident. Your site needs
-            to communicate trust and urgency instantly, or they're calling your competitor.</p>
-          <p class="mono" style="color: var(--white-50); margin-bottom: 16px;">Common problems we fix:</p>
-          <ul class="niche-problems">
-            <li><span class="problem-x">✕</span>Generic homepage that could be any contractor</li>
-            <li><span class="problem-x">✕</span>No local area signaling, visitors unsure you serve them</li>
-            <li><span class="problem-x">✕</span>Slow load times costing emergency calls</li>
-            <li><span class="problem-x">✕</span>Contact forms nobody fills out</li>
-          </ul>
-          <p class="mono" style="color: var(--yellow); margin-bottom: 16px;">After our optimization:</p>
-          <ul class="niche-wins">
-            <li><span class="win-check">✓</span>Localized hero copy mentioning your city and neighborhoods</li>
-            <li><span class="win-check">✓</span>24/7 emergency booking flow that actually converts</li>
-            <li><span class="win-check">✓</span>Sub-3 second load time on mobile</li>
-            <li><span class="win-check">✓</span>One-step contact, no friction, no confusion</li>
-          </ul>
+          <div class="niche-card__img">
+            <img src="https://images.unsplash.com/photo-1607472586893-edb57bdc0e39?auto=format&fit=crop&w=800&q=80"
+              alt="Professional plumber working on pipes under a sink" loading="lazy">
+          </div>
+          <div class="niche-card__body">
+            <h3>PLUMBING COMPANIES</h3>
+            <p>When a pipe bursts at 2am, homeowners pick the first site that makes them feel confident. Your site needs
+              to
+              communicate trust and urgency instantly, or they're calling your competitor.</p>
+            <p class="mono" style="color: var(--white-50); margin-bottom: 16px;">Common problems we fix:</p>
+            <ul class="niche-problems">
+              <li><span class="problem-x">✕</span>Generic homepage that could be any contractor</li>
+              <li><span class="problem-x">✕</span>No local area signaling, visitors unsure you serve them</li>
+              <li><span class="problem-x">✕</span>Slow load times costing emergency calls</li>
+              <li><span class="problem-x">✕</span>Contact forms nobody fills out</li>
+            </ul>
+            <p class="mono" style="color: var(--yellow); margin-bottom: 16px;">After our optimization:</p>
+            <ul class="niche-wins">
+              <li><span class="win-check">✓</span>Localized hero copy mentioning your city and neighborhoods</li>
+              <li><span class="win-check">✓</span>24/7 emergency booking flow that actually converts</li>
+              <li><span class="win-check">✓</span>Sub-3 second load time on mobile</li>
+              <li><span class="win-check">✓</span>One-step contact, no friction, no confusion</li>
+            </ul>
+          </div>
         </div>
 
       </div>
@@ -3306,7 +3590,7 @@
       </div>
 
       <div class="case-studies__grid-wrap">
-        <button class="case-studies__chevron case-studies__chevron--left" id="caseChevronLeft" aria-label="Previous">
+        <!-- <button class="case-studies__chevron case-studies__chevron--left" id="caseChevronLeft" aria-label="Previous">
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M15 18l-6-6 6-6" />
           </svg>
@@ -3315,26 +3599,20 @@
           <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
             <path d="M9 18l6-6-6-6" />
           </svg>
-        </button>
+        </button> -->
         <div class="case-studies__grid">
 
           <!-- CASE 1 — Lorenz PHAC -->
-          <div class="case-card fade-up fade-up-d1">
-            <div class="case-card__image" style="background: linear-gradient(135deg, #1a1a1a 0%, #2c2c2c 100%);">
-              <div class="case-card__image-placeholder">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
-                  stroke-width="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <path d="M3 9h18M9 21V9" />
-                </svg>
-                <span>SCREENSHOT PLACEHOLDER</span>
-              </div>
+          <a href="https://lorenzphac.com/" class="case-card fade-up fade-up-d1"
+            style="text-decoration: none; color: inherit;">
+            <div class="case-card__image">
+              <img src="/work1.png" alt="Lorenz Plumbing Heating & Air Conditioning website" loading="lazy">
             </div>
             <div class="case-card__body">
-              <div class="case-card__niche">HVAC · Dallas, TX</div>
-              <h3>ARCTIC COMFORT HVAC</h3>
-              <p>Homepage was losing 80% of visitors in under 10 seconds. Emergency service calls were non-existent from
-                organic traffic.</p>
+              <div class="case-card__niche">HVAC &amp; Plumbing · Springfield, MO</div>
+              <h3>LORENZ PLUMBING, HEATING &amp; AC</h3>
+              <p>Full-service HVAC and plumbing company losing leads to slow load times and a buried contact flow.
+                Visitors left before finding emergency service options.</p>
               <div class="case-metrics">
                 <div class="metric-chip">
                   <div class="metric-chip__value">+187%</div>
@@ -3357,25 +3635,19 @@
               <span class="case-card__tag">Copy Rewrite</span>
               <span class="case-card__tag">Mobile Opt.</span>
             </div>
-          </div>
+          </a>
 
           <!-- CASE 2 — A-1 Total Service Plumbing -->
-          <div class="case-card fade-up fade-up-d2">
-            <div class="case-card__image" style="background: linear-gradient(135deg, #1c1c22 0%, #2a2a35 100%);">
-              <div class="case-card__image-placeholder">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
-                  stroke-width="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <path d="M3 9h18M9 21V9" />
-                </svg>
-                <span>SCREENSHOT PLACEHOLDER</span>
-              </div>
+          <a class="case-card fade-up fade-up-d2" href="https://a-1totalserviceplumbing.com/"
+            style="text-decoration: none; color: inherit;">
+            <div class="case-card__image">
+              <img src="/work2.png" alt="A-1 Total Service Plumbing website" loading="lazy">
             </div>
             <div class="case-card__body">
-              <div class="case-card__niche">Plumbing · Chicago, IL</div>
-              <h3>PROFLOW PLUMBING</h3>
-              <p>Decent traffic from Google My Business, but visitors weren't converting. Contact form was buried 4
-                scrolls deep and nobody saw it.</p>
+              <div class="case-card__niche">Plumbing &amp; Trenchless · Virginia</div>
+              <h3>A-1 TOTAL SERVICE PLUMBING</h3>
+              <p>Decent traffic from Google My Business, but visitors weren't converting. Contact form was buried deep
+                and the site lacked trust signals above the fold.</p>
               <div class="case-metrics">
                 <div class="metric-chip">
                   <div class="metric-chip__value">+240%</div>
@@ -3398,25 +3670,19 @@
               <span class="case-card__tag">CTA Optimization</span>
               <span class="case-card__tag">Trust Build</span>
             </div>
-          </div>
+          </a>
 
           <!-- CASE 3 — Benjamin Franklin Plumbing -->
-          <div class="case-card fade-up fade-up-d3">
-            <div class="case-card__image" style="background: linear-gradient(135deg, #1a1c1a 0%, #252c25 100%);">
-              <div class="case-card__image-placeholder">
-                <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="rgba(255,255,255,0.15)"
-                  stroke-width="1.5">
-                  <rect x="3" y="3" width="18" height="18" rx="2" />
-                  <path d="M3 9h18M9 21V9" />
-                </svg>
-                <span>SCREENSHOT PLACEHOLDER</span>
-              </div>
+          <a href="https://www.benjaminfranklinplumbing.com/" class="case-card fade-up fade-up-d3"
+            style="text-decoration: none; color: inherit;">
+            <div class="case-card__image">
+              <img src="/work3.png" alt="Benjamin Franklin Plumbing website" loading="lazy">
             </div>
             <div class="case-card__body">
-              <div class="case-card__niche">HVAC · Atlanta, GA</div>
-              <h3>PEAK TEMP HVAC</h3>
-              <p>Running Google Ads but landing page wasn't matching ad message. High spend, low return. New landing
-                pages cut cost-per-lead by half.</p>
+              <div class="case-card__niche">Plumbing · Nationwide</div>
+              <h3>BENJAMIN FRANKLIN PLUMBING</h3>
+              <p>National franchise with strong brand recognition but local landing pages weren't converting. Ad spend
+                was high with poor return on booked appointments.</p>
               <div class="case-metrics">
                 <div class="metric-chip">
                   <div class="metric-chip__value">−51%</div>
@@ -3439,7 +3705,7 @@
               <span class="case-card__tag">Ad Alignment</span>
               <span class="case-card__tag">SEO Copy</span>
             </div>
-          </div>
+          </a>
 
         </div>
       </div><!-- /.case-studies__grid-wrap -->
@@ -3534,7 +3800,7 @@
               <p class="step-sub">We'll scan it for conversion issues. Takes 30 seconds.</p>
             </div>
             <div class="audit-entry">
-              <input type="url" id="auditUrl" placeholder="https://yourbusiness.com" autocomplete="url" />
+              <input type="text" id="auditUrl" placeholder="yourbusiness.com" autocomplete="url" />
               <button class="btn btn--primary btn--lg" onclick="goStep2()">
                 Analyze It <span class="btn-arrow">→</span>
               </button>
@@ -3553,27 +3819,27 @@
               <p style="font-size: 0.82rem; color: var(--white-50); margin-bottom: 10px;">Primary traffic source</p>
               <div class="traffic-grid" id="trafficGrid">
                 <div class="traffic-opt" onclick="selectTraffic(this,'google_seo')">
-                  <div class="traffic-opt__icon">🔍</div>
+                  <div class="traffic-opt__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/></svg></div>
                   <div class="traffic-opt__label">Google Search (SEO)</div>
                 </div>
                 <div class="traffic-opt" onclick="selectTraffic(this,'google_ads')">
-                  <div class="traffic-opt__icon">📢</div>
+                  <div class="traffic-opt__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 013 3L7 19l-4 1 1-4L16.5 3.5z"/></svg></div>
                   <div class="traffic-opt__label">Google Ads</div>
                 </div>
                 <div class="traffic-opt" onclick="selectTraffic(this,'google_business')">
-                  <div class="traffic-opt__icon">📍</div>
+                  <div class="traffic-opt__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
                   <div class="traffic-opt__label">Google Business Profile</div>
                 </div>
                 <div class="traffic-opt" onclick="selectTraffic(this,'meta_ads')">
-                  <div class="traffic-opt__icon">📱</div>
+                  <div class="traffic-opt__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"/><path d="M12 18h.01"/></svg></div>
                   <div class="traffic-opt__label">Facebook / Instagram Ads</div>
                 </div>
                 <div class="traffic-opt" onclick="selectTraffic(this,'referrals')">
-                  <div class="traffic-opt__icon">🤝</div>
+                  <div class="traffic-opt__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg></div>
                   <div class="traffic-opt__label">Referrals / Word of Mouth</div>
                 </div>
                 <div class="traffic-opt" onclick="selectTraffic(this,'not_sure')">
-                  <div class="traffic-opt__icon">🤷</div>
+                  <div class="traffic-opt__icon"><svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 015.83 1c0 2-3 3-3 3"/><path d="M12 17h.01"/></svg></div>
                   <div class="traffic-opt__label">Not Sure</div>
                 </div>
               </div>
@@ -4137,6 +4403,119 @@
         </div>
       </div>
     </div>
+  </section> -->
+
+  <!-- ================================================
+       FAQ
+  ================================================ -->
+  <section id="faq">
+    <div class="container">
+      <div class="faq__header fade-up" style="text-align:center;">
+        <div class="section-label">FAQ</div>
+        <h2>FREQUENTLY ASKED<br>QUESTIONS</h2>
+        <p style="max-width:520px; margin:14px auto 0; font-size:1.05rem;">Everything you need to know before working
+          with us. Still have questions? Book a free call.</p>
+      </div>
+
+      <div class="faq__grid fade-up fade-up-d1">
+
+        <div class="faq-item active">
+          <button class="faq-item__question" aria-expanded="true">
+            How is this different from hiring a web designer?
+            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              Web designers build websites. We optimize them for conversions. Most contractor sites look fine but
+              silently lose 60-80% of visitors. We fix the actual revenue leaks — CTAs, trust signals, page speed,
+              mobile experience — so your existing traffic turns into booked jobs.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-item__question" aria-expanded="false">
+            Do I need to rebuild my entire website?
+            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              No. In most cases we work with your existing site. We make targeted, high-impact changes — not a full
+              rebuild. Think of it as a surgical upgrade, not a demolition. You keep your domain, your brand, and your
+              content.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-item__question" aria-expanded="false">
+            How long until I see results?
+            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              Most clients see a measurable increase in calls and form submissions within 4-6 weeks. Some quick wins
+              (like CTA placement and mobile fixes) start working within days of going live.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-item__question" aria-expanded="false">
+            What if it doesn't work?
+            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              We stand behind our work with a results-first guarantee. If we don't deliver measurable improvement in
+              your lead volume, you don't keep paying. We only win when you win — that's why we're selective about who
+              we work with.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-item__question" aria-expanded="false">
+            Do you only work with HVAC and plumbing companies?
+            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              Yes. We specialize exclusively in HVAC and plumbing because generic marketing advice doesn't book more
+              jobs. By going deep on two trades, we know exactly what works — the CTAs, the trust signals, the page
+              structures — that convert homeowners into service calls.
+            </div>
+          </div>
+        </div>
+
+        <div class="faq-item">
+          <button class="faq-item__question" aria-expanded="false">
+            How much does it cost?
+            <svg class="faq-item__chevron" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M6 9l6 6 6-6" />
+            </svg>
+          </button>
+          <div class="faq-item__answer">
+            <div class="faq-item__answer-inner">
+              It depends on the scope, but our goal is always a positive ROI within the first 2-3 months. Book a free
+              strategy call and we'll give you an honest assessment of what your site needs and what it would cost — no
+              pressure, no fluff.
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
   </section>
 
   <!-- ================================================
@@ -4290,6 +4669,7 @@
     // ---- MOBILE NAV ----
     function toggleMobileNav() {
       document.getElementById('mobileNav').classList.toggle('open');
+      document.getElementById('navbar').classList.toggle('nav-hidden');
     }
 
     // ---- SCROLL ANIMATIONS ----
@@ -4347,11 +4727,16 @@
 
     // ── Step 1 → Step 2 ──
     function goStep2() {
-      const url = document.getElementById('auditUrl').value.trim();
-      if (!url || !url.startsWith('http')) {
+      let url = document.getElementById('auditUrl').value.trim();
+      if (!url) {
         document.getElementById('auditUrl').style.borderColor = '#ff6060';
         document.getElementById('auditUrl').focus();
         return;
+      }
+      // Auto-prepend https:// if no protocol provided
+      if (!url.startsWith('http://') && !url.startsWith('https://')) {
+        url = 'https://' + url;
+        document.getElementById('auditUrl').value = url;
       }
       document.getElementById('auditUrl').style.borderColor = '';
       goStep(2);
